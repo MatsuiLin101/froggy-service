@@ -1,6 +1,7 @@
 from django.test import TransactionTestCase
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from rest_framework.authtoken.models import Token
 from apps.users.models import User
 
 from .initial import create_superuser
@@ -21,11 +22,13 @@ class UserModelTestCase(TransactionTestCase):
 
     def test_create_accountkit_use(self):
         user = User.objects.create_accountkit_user(mobile='+886972505939', email=None)
+        self.assertTrue(user.is_active)
 
         with self.assertRaises(IntegrityError):
             User.objects.create_accountkit_user(mobile='+886972505939', email=None)
 
         user = User.objects.create_accountkit_user(mobile=None, email='test@tester.email.com')
+        self.assertTrue(user.is_active)
 
         with self.assertRaises(IntegrityError):
             User.objects.create_accountkit_user(mobile=None, email='test@tester.email.com')
@@ -33,7 +36,11 @@ class UserModelTestCase(TransactionTestCase):
         with self.assertRaises(ValidationError):
             User.objects.create_accountkit_user(mobile=None, email=None)
 
-        user = User.objects.create_accountkit_user(mobile='+886972505937', is_staff=True, is_superuser=True)
-        self.assertFalse(user.is_staff)
-        self.assertFalse(user.is_superuser)
-        self.assertTrue(user.is_active)
+        with self.assertRaises(ValidationError):
+            user = User.objects.create_accountkit_user(mobile='+886972505937', is_staff=True, is_superuser=True)
+
+    def test_create_token(self):
+        user = User.objects.create_accountkit_user(mobile='+886972505939', email=None)
+        token = Token.objects.create(user=user)
+
+        self.assertIsNotNone(token)

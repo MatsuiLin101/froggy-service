@@ -179,6 +179,6 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             Token.objects.filter(user=user).delete()
 
-        token = Token.objects.create(user)
+        token = Token.objects.create(user=user)
 
         return JsonResponse({'token': token})
