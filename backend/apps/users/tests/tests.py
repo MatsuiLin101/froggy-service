@@ -43,4 +43,8 @@ class UserModelTestCase(TransactionTestCase):
         user = User.objects.create_accountkit_user(mobile='+886972505939', email=None)
         token = Token.objects.create(user=user)
 
-        self.assertIsNotNone(token)
+        self.assertEqual(token, Token.objects.get(user=user))
+
+        Token.objects.filter(user=user).delete()
+
+

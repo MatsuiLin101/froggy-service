@@ -168,10 +168,10 @@ class UserViewSet(viewsets.ModelViewSet):
         mobile = None
         if 'email' in identity_response:
             email = identity_response['email']['address']
-            user = User.objects.filter(email=email)
+            user = User.objects.filter(email=email).first()
         elif 'phone' in identity_response:
             mobile = identity_response['phone']['number']
-            user = User.objects.filter(mobile=mobile)
+            user = User.objects.filter(mobile=mobile).first()
 
         if not user:
             # Register a new account kit user
@@ -181,4 +181,4 @@ class UserViewSet(viewsets.ModelViewSet):
 
         token = Token.objects.create(user=user)
 
-        return JsonResponse({'token': token})
+        return JsonResponse({'token': token.key})
