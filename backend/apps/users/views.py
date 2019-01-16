@@ -19,6 +19,7 @@ from django.core.signing import TimestampSigner, BadSignature
 
 from apps.users.models import User
 from apps.users.serializers import UserSerializer, UserWriteSerializer
+from apps.users.utils import jwt_payload_handler, jwt_encode_handler
 
 
 env = environ.Env()
@@ -181,4 +182,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
         token = Token.objects.create(user=user)
 
-        return JsonResponse({'token': token.key})
+        payload = jwt_payload_handler(user)
+        jwt = jwt_encode_handler(payload)
+
+        return JsonResponse({
+            'token': token.key,
+            'jwt': jwt
+        })

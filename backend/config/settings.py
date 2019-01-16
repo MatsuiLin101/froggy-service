@@ -39,6 +39,7 @@ THIRD_PARTY_APPS = [
     'fsm_admin',
     'rest_framework_swagger',
     'phonenumber_field',
+    'djangorestframework-jwt',
 ]
 
 LOCAL_APPS = [
